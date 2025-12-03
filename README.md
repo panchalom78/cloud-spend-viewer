@@ -8,7 +8,7 @@ A full-stack dashboard for visualizing and analyzing cloud infrastructure spendi
 
 ### Frontend (React)
 
--   React 18 - UI library with hooks\
+-   React 19 - UI library with hooks
 
 -   Tailwind CSS - Utility-first CSS framework
 
@@ -69,6 +69,8 @@ cd client
 npm run dev
 ```
 
+---
+
 ### Parts Completed
 
 #### 1. Core Dashboard & Data Display
@@ -121,7 +123,63 @@ npm run dev
 
 -   Database Integration
 
-### Screenshots
+---
+
+### Assumptions Made for the Cloud Spend Viewer Project
+
+#### 1. Data Structure & Format
+
+##### Consistent Schema: All JSON data files follow the same structure with these fields:
+
+-   date: ISO date string parseable by JavaScript's Date constructor
+
+-   cloud_provider: Either "AWS" or "GCP" (case-insensitive)
+
+-   service: Service name string (e.g., "EC2", "BigQuery", "S3")
+
+-   team: One of ["Core", "Web", "Data"]
+
+-   env: One of ["prod", "staging", "dev"]
+
+-   cost_usd: Numeric value representing USD cost
+
+-   Optional fields: account_id, project_id, tags, description
+
+#### 2. User Knowledge & Needs
+
+-   Technical Audience: Users understand cloud computing terminology (AWS, GCP, services)
+
+-   Analysis Goals: Users want to analyze spending by multiple dimensions simultaneously
+
+-   Monthly Focus: Monthly trend analysis is more valuable than daily/weekly breakdowns
+
+-   Top-N Insight: Showing top 5 services provides sufficient business insight
+
+#### 3. Filtering & Sorting Logic
+
+-   "All" Means No Filter: Selecting "All" removes that filter dimension
+
+-   Independent Filters: Month filter works across all years
+
+-   Case Insensitivity: Team and Environment filters ignore case
+
+-   Filter Scope: Sorting applies to filtered data only
+
+-   Page Reset: Changing filters resets to page 1
+
+#### 4. Visual Hierarchy & Layout
+
+-   Desktop-First: Primary usage on larger screens
+
+-   Card-Based Design: Clear separation of different dashboard sections
+
+-   Progressive Disclosure: Basic info first, details on demand
+
+-   Color Coding: Consistent color schemes for teams, clouds, environments
+
+---
+
+### UI - Screenshots
 
 ![UI](./screenshots/Screenshot%202025-12-03%20185252.png)
 ![UI](./screenshots/Screenshot%202025-12-03%20185313.png)

@@ -303,12 +303,15 @@ function PieChartComponent({ data, groupBy }) {
         "#EC4899",
         "#14B8A6",
         "#F97316",
+        "#84CC16",
+        "#06B6D4",
+        "#61e0e5",
+        "#F43F5E",
     ];
-
     const labelKey =
         groupBy === "month" ? "month" : groupBy === "team" ? "team" : "cloud";
 
-    const displayData = data.length > 8 ? data.slice(0, 8) : data;
+    const displayData = data.length > 8 ? data.slice(0, 12) : data;
     const total = displayData.reduce((sum, item) => sum + item.total, 0);
 
     /**
