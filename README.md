@@ -120,3 +120,10 @@ npm run dev
 -   Real Cloud API Integration
 
 -   Database Integration
+
+### Screenshots
+
+![UI](./screenshots/Screenshot%202025-12-03%20185252.png)
+![UI](./screenshots/Screenshot%202025-12-03%20185313.png)
+![UI](./screenshots/Screenshot%202025-12-03%20185327.png)
+![UI](./screenshots/Screenshot%202025-12-03%20185343.png)
