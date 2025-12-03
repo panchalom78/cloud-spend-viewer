@@ -1,6 +1,45 @@
-import React, { useEffect } from "react";
+/**
+ * Detail Modal Component
+ *
+ * Modal dialog for displaying detailed cloud spending record information.
+ * Includes escape key handling, backdrop clicks, and responsive layout.
+ *
+ * @component
+ * @example
+ * // Open modal with record data
+ * <DetailModal
+ *   isOpen={true}
+ *   onClose={handleClose}
+ *   data={selectedRecord}
+ * />
+ */
 
+import { useEffect } from "react";
+
+/**
+ * Modal component for detailed record view.
+ *
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Modal visibility state
+ * @param {Function} props.onClose - Close handler function
+ * @param {Object} props.data - Record data to display
+ *
+ * @example
+ * // Controlled modal usage
+ * const [selected, setSelected] = useState(null);
+ * <DetailModal
+ *   isOpen={selected !== null}
+ *   onClose={() => setSelected(null)}
+ *   data={selected}
+ * />
+ */
 function DetailModal({ isOpen, onClose, data }) {
+    /**
+     * Setup keyboard and scroll behavior.
+     * - Escape key closes modal
+     * - Disables body scrolling when open
+     */
     useEffect(() => {
         const handleEscape = (e) => {
             if (e.key === "Escape") onClose();
@@ -17,12 +56,20 @@ function DetailModal({ isOpen, onClose, data }) {
 
     if (!isOpen || !data) return null;
 
-    // Generate description based on data
+    /**
+     * Generate human-readable description from record data.
+     * @param {Object} record - Cloud spending record
+     * @returns {string} Descriptive sentence
+     */
     const getDescription = (record) => {
         return `This is ${record.cloud_provider} ${record.service} spend from the ${record.team} team in ${record.env} environment.`;
     };
 
-    // Format currency consistently
+    /**
+     * Format currency values consistently.
+     * @param {number} amount - Cost amount
+     * @returns {string} Formatted currency string
+     */
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -189,6 +236,25 @@ function DetailModal({ isOpen, onClose, data }) {
     );
 }
 
+/**
+ * Row component for detail modal fields.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} props.label - Field label
+ * @param {string} props.value - Field value
+ * @param {boolean} [props.badge=false] - Display as badge
+ * @param {string} [props.badgeColor="gray"] - Badge color theme
+ * @param {boolean} [props.highlight=false] - Highlight value (for costs)
+ *
+ * @example
+ * // Regular text row
+ * <DetailRow label="Date" value="2024-01-15" />
+ * // Badge row
+ * <DetailRow label="Team" value="Core" badge badgeColor="purple" />
+ * // Highlighted row
+ * <DetailRow label="Cost" value="$123.45" highlight />
+ */
 function DetailRow({
     label,
     value,
@@ -196,6 +262,9 @@ function DetailRow({
     badgeColor = "gray",
     highlight = false,
 }) {
+    /**
+     * CSS classes for badge color variants.
+     */
     const badgeClasses = {
         orange: "bg-orange-100 text-orange-800",
         blue: "bg-blue-100 text-blue-800",

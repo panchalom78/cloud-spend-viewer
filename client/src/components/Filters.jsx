@@ -1,6 +1,66 @@
-import React from "react";
+/**
+ * Filters Component
+ *
+ * Filter controls for cloud spending data with sorting options.
+ * Includes dropdowns for cloud provider, team, environment, month,
+ * and sorting controls with visual feedback.
+ *
+ * @component
+ * @requires ./FilterBadge - Badge component for active filters
+ * @example
+ * // Full filter controls
+ * <Filters
+ *   cloudProvider="AWS"
+ *   setCloudProvider={setCloudProvider}
+ *   team="Core"
+ *   setTeam={setTeam}
+ *   env="prod"
+ *   setEnv={setEnv}
+ *   month="3"
+ *   setMonth={setMonth}
+ *   sortBy="cost"
+ *   sortOrder="desc"
+ *   handleSortToggle={handleSortToggle}
+ *   loading={false}
+ *   clearAllFilters={clearAllFilters}
+ *   activeFilters={activeFilters}
+ *   clearFilter={clearFilter}
+ * />
+ */
+
 import FilterBadge from "./FilterBadge";
 
+/**
+ * Filter controls component for cloud spending data.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} props.cloudProvider - Selected cloud provider filter
+ * @param {Function} props.setCloudProvider - Cloud provider setter
+ * @param {string} props.team - Selected team filter
+ * @param {Function} props.setTeam - Team setter
+ * @param {string} props.env - Selected environment filter
+ * @param {Function} props.setEnv - Environment setter
+ * @param {string} props.month - Selected month filter (1-12 or empty)
+ * @param {Function} props.setMonth - Month setter
+ * @param {string} props.sortBy - Current sort field ('cost' or 'date')
+ * @param {string} props.sortOrder - Current sort order ('asc' or 'desc')
+ * @param {Function} props.handleSortToggle - Sort toggle handler
+ * @param {boolean} props.loading - Loading state to disable controls
+ * @param {Function} props.clearAllFilters - Clear all filters handler
+ * @param {Array} props.activeFilters - Array of active filter objects
+ * @param {Function} props.clearFilter - Single filter removal handler
+ *
+ * @example
+ * // Basic filter setup
+ * <Filters
+ *   cloudProvider={filters.cloud}
+ *   setCloudProvider={(value) => setFilters({...filters, cloud: value})}
+ *   team={filters.team}
+ *   setTeam={(value) => setFilters({...filters, team: value})}
+ *   // ... other props
+ * />
+ */
 function Filters({
     cloudProvider,
     setCloudProvider,
@@ -18,10 +78,12 @@ function Filters({
     activeFilters,
     clearFilter,
 }) {
+    // Available filter options
     const teams = ["All", "Core", "Web", "Data"];
     const envs = ["All", "prod", "staging", "dev"];
     const cloudOptions = ["All", "AWS", "GCP"];
 
+    // Month options with labels
     const months = [
         { value: "", label: "All Months" },
         { value: "1", label: "January" },
@@ -45,7 +107,7 @@ function Filters({
             </h2>
 
             <div className="space-y-4">
-                {/* Cloud Provider */}
+                {/* Cloud Provider Filter */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Cloud Provider
@@ -57,6 +119,7 @@ function Filters({
                         onChange={(e) => {
                             setCloudProvider(e.target.value);
                         }}
+                        aria-label="Select cloud provider"
                     >
                         {cloudOptions.map((c) => (
                             <option key={c} value={c}>
@@ -66,7 +129,7 @@ function Filters({
                     </select>
                 </div>
 
-                {/* Team */}
+                {/* Team Filter */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Team
@@ -78,6 +141,7 @@ function Filters({
                         onChange={(e) => {
                             setTeam(e.target.value);
                         }}
+                        aria-label="Select team"
                     >
                         {teams.map((t) => (
                             <option key={t} value={t}>
@@ -87,7 +151,7 @@ function Filters({
                     </select>
                 </div>
 
-                {/* Environment */}
+                {/* Environment Filter */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Environment
@@ -99,6 +163,7 @@ function Filters({
                         onChange={(e) => {
                             setEnv(e.target.value);
                         }}
+                        aria-label="Select environment"
                     >
                         {envs.map((e) => (
                             <option key={e} value={e}>
@@ -108,7 +173,7 @@ function Filters({
                     </select>
                 </div>
 
-                {/* Month */}
+                {/* Month Filter */}
                 <div className="grid gap-3">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -121,6 +186,7 @@ function Filters({
                             onChange={(e) => {
                                 setMonth(e.target.value);
                             }}
+                            aria-label="Select month"
                         >
                             {months.map((m) => (
                                 <option key={m.value} value={m.value}>
@@ -131,7 +197,7 @@ function Filters({
                     </div>
                 </div>
 
-                {/* Sorting */}
+                {/* Sorting Controls */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Sorting
@@ -145,11 +211,17 @@ function Filters({
                                     : "border-gray-300 hover:bg-gray-50"
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                             onClick={() => handleSortToggle("cost")}
+                            aria-label={`Sort by cost ${
+                                sortBy === "cost" ? `(${sortOrder})` : ""
+                            }`}
                         >
                             <div className="flex items-center justify-center gap-1">
                                 <span>Cost</span>
                                 {sortBy === "cost" && (
-                                    <span className="text-xs">
+                                    <span
+                                        className="text-xs"
+                                        aria-hidden="true"
+                                    >
                                         {sortOrder === "asc" ? "↑" : "↓"}
                                     </span>
                                 )}
@@ -163,11 +235,17 @@ function Filters({
                                     : "border-gray-300 hover:bg-gray-50"
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                             onClick={() => handleSortToggle("date")}
+                            aria-label={`Sort by date ${
+                                sortBy === "date" ? `(${sortOrder})` : ""
+                            }`}
                         >
                             <div className="flex items-center justify-center gap-1">
                                 <span>Date</span>
                                 {sortBy === "date" && (
-                                    <span className="text-xs">
+                                    <span
+                                        className="text-xs"
+                                        aria-hidden="true"
+                                    >
                                         {sortOrder === "asc" ? "↑" : "↓"}
                                     </span>
                                 )}
@@ -176,12 +254,13 @@ function Filters({
                     </div>
                 </div>
 
-                {/* Reset Button */}
+                {/* Reset All Filters Button */}
                 <div className="pt-2">
                     <button
                         onClick={clearAllFilters}
                         disabled={loading || activeFilters.length === 0}
                         className="w-full px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        aria-label="Reset all filters"
                     >
                         <svg
                             className="w-4 h-4"
@@ -201,7 +280,7 @@ function Filters({
                 </div>
             </div>
 
-            {/* Active Filters */}
+            {/* Active Filters Display */}
             {activeFilters.length > 0 && (
                 <div className="mt-6 pt-4 border-t border-gray-200">
                     <h3 className="text-sm font-medium text-gray-700 mb-2">

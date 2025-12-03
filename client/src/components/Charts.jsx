@@ -1,5 +1,19 @@
-// components/Charts.jsx - Updated to only show line charts for monthly data
-import React, { useState, useMemo } from "react";
+/**
+ * Charts Component
+ *
+ * Interactive data visualization component for cloud spending analytics.
+ * Supports bar, line, and pie charts with dynamic data grouping.
+ *
+ * @component
+ * @requires recharts - Charting library
+ * @requires ./Spinner - Loading indicator component
+ *
+ * @example
+ * // Basic usage with summary data
+ * <SpendingCharts summary={summaryData} loading={false} />
+ */
+
+import React, { useState } from "react";
 import {
     BarChart,
     Bar,
@@ -17,6 +31,16 @@ import {
 } from "recharts";
 import Spinner from "./Spinner";
 
+/**
+ * Chart type and grouping selector controls.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} props.chartType - Current chart type ('bar', 'line', 'pie')
+ * @param {Function} props.setChartType - Setter for chart type
+ * @param {string} props.groupBy - Current grouping ('month', 'team', 'cloud')
+ * @param {Function} props.setGroupBy - Setter for grouping
+ */
 function ChartSelector({ chartType, setChartType, groupBy, setGroupBy }) {
     const isTimeBased = groupBy === "month";
 
@@ -64,6 +88,18 @@ function ChartSelector({ chartType, setChartType, groupBy, setGroupBy }) {
     );
 }
 
+/**
+ * Bar chart component for categorical or time-series data.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Array} props.data - Chart data array
+ * @param {string} props.groupBy - Grouping key ('month', 'team', 'cloud')
+ *
+ * @example
+ * // Monthly bar chart
+ * <BarChartComponent data={monthlyData} groupBy="month" />
+ */
 function BarChartComponent({ data, groupBy }) {
     if (!data || data.length === 0) {
         return (
@@ -73,6 +109,9 @@ function BarChartComponent({ data, groupBy }) {
         );
     }
 
+    /**
+     * Custom tooltip for bar chart hover interactions.
+     */
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
@@ -96,6 +135,10 @@ function BarChartComponent({ data, groupBy }) {
         return null;
     };
 
+    /**
+     * Format Y-axis values for better readability.
+     * Converts large numbers to K (thousands) or M (millions).
+     */
     const formatYAxis = (value) => {
         if (value >= 1000000) {
             return `$${(value / 1000000).toFixed(1)}M`;
@@ -149,6 +192,17 @@ function BarChartComponent({ data, groupBy }) {
     );
 }
 
+/**
+ * Line chart component for time-series data (monthly trends only).
+ *
+ * @component
+ * @param {Object} props
+ * @param {Array} props.data - Time-series data (requires 'month' key)
+ *
+ * @example
+ * // Monthly trend line chart
+ * <LineChartComponent data={monthlyTrendData} />
+ */
 function LineChartComponent({ data }) {
     if (!data || data.length === 0) {
         return (
@@ -158,6 +212,9 @@ function LineChartComponent({ data }) {
         );
     }
 
+    /**
+     * Custom tooltip for line chart hover interactions.
+     */
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
@@ -215,6 +272,18 @@ function LineChartComponent({ data }) {
     );
 }
 
+/**
+ * Pie chart component for proportional data breakdowns.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Array} props.data - Chart data with 'total' values
+ * @param {string} props.groupBy - Grouping key for labels
+ *
+ * @example
+ * // Team distribution pie chart
+ * <PieChartComponent data={teamData} groupBy="team" />
+ */
 function PieChartComponent({ data, groupBy }) {
     if (!data || data.length === 0) {
         return (
@@ -224,6 +293,7 @@ function PieChartComponent({ data, groupBy }) {
         );
     }
 
+    // Color palette for pie chart segments
     const COLORS = [
         "#3B82F6",
         "#10B981",
@@ -241,6 +311,9 @@ function PieChartComponent({ data, groupBy }) {
     const displayData = data.length > 8 ? data.slice(0, 8) : data;
     const total = displayData.reduce((sum, item) => sum + item.total, 0);
 
+    /**
+     * Custom tooltip showing percentage breakdown.
+     */
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
             const data = payload[0].payload;
@@ -358,6 +431,21 @@ function PieChartComponent({ data, groupBy }) {
     );
 }
 
+/**
+ * Main charts container with state management and loading states.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.summary - Data summary object with charts property
+ * @param {boolean} props.loading - Loading state flag
+ *
+ * @example
+ * // Full charts component
+ * <SpendingCharts
+ *   summary={apiResponse.summary}
+ *   loading={isLoading}
+ * />
+ */
 function SpendingCharts({ summary, loading }) {
     const [chartType, setChartType] = useState("bar");
     const [groupBy, setGroupBy] = useState("month");
@@ -402,7 +490,9 @@ function SpendingCharts({ summary, loading }) {
         );
     }
 
-    // Get chart data based on groupBy selection
+    /**
+     * Get chart data based on selected grouping.
+     */
     const getChartData = () => {
         switch (groupBy) {
             case "month":
@@ -419,7 +509,7 @@ function SpendingCharts({ summary, loading }) {
     const chartData = getChartData();
     const isTimeBased = groupBy === "month";
 
-    // Get appropriate chart title
+    // Chart titles based on grouping
     const chartTitles = {
         month: "Monthly Spending Trend",
         team: "Spending by Team",

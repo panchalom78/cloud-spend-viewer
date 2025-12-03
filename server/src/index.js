@@ -3,7 +3,7 @@ import router from "./routes/cloud-data.route.js";
 import cors from "cors";
 
 const corsOptions = {
-    origin: "http://localhost:5173", // Replace with your specific origin
+    origin: "http://localhost:5173",
 };
 
 const app = express();

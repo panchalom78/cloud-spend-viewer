@@ -1,4 +1,18 @@
-// K&Co. Cloud Spend Viewer - Main Component
+/**
+ * Cloud Spend Viewer - Main Application Component
+ *
+ * Primary dashboard for cloud spending analysis with filtering,
+ * visualization, and data exploration capabilities.
+ *
+ * @component
+ * @requires ../components/Filters - Filter controls
+ * @requires ../components/SummaryCard - Dashboard summary
+ * @requires ../components/SpendTable - Data table
+ * @requires ../components/Pagination - Navigation controls
+ * @requires ../components/Charts - Data visualization
+ *
+ */
+
 import { useEffect, useState } from "react";
 import Filters from "../components/Filters";
 import SummaryCard from "../components/SummaryCard";
@@ -6,8 +20,18 @@ import SpendTable from "../components/SpendTable";
 import Pagination from "../components/Pagination";
 import SpendingCharts from "../components/Charts";
 
+/**
+ * API base URL - configurable endpoint.
+ * @constant {string}
+ */
 const API_BASE = "http://localhost:3000/api";
 
+/**
+ * Main cloud spending viewer dashboard.
+ *
+ * @component
+ * @returns {JSX.Element} Complete dashboard interface
+ */
 export default function CloudSpendViewer() {
     // UI state
     const [page, setPage] = useState(1);
@@ -20,7 +44,7 @@ export default function CloudSpendViewer() {
     const [sortBy, setSortBy] = useState(null);
     const [sortOrder, setSortOrder] = useState("desc");
 
-    // Data
+    // Data state
     const [rows, setRows] = useState([]);
     const [meta, setMeta] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -31,7 +55,11 @@ export default function CloudSpendViewer() {
     });
     const [error, setError] = useState(null);
 
-    // helper to build query string
+    /**
+     * Build query string from current filter state.
+     * @param {Object} [extra={}] - Additional query parameters
+     * @returns {string} URL-encoded query string
+     */
     const buildQuery = (extra = {}) => {
         const params = new URLSearchParams();
         params.set("page", extra.page ?? page);
@@ -47,7 +75,10 @@ export default function CloudSpendViewer() {
         return params.toString();
     };
 
-    // fetch paginated data + summary together
+    /**
+     * Fetch data from API with current filters and pagination.
+     * Uses debouncing (300ms) and abort controller for cleanup.
+     */
     useEffect(() => {
         let controller = new AbortController();
         const fetchData = async () => {
@@ -96,6 +127,10 @@ export default function CloudSpendViewer() {
         };
     }, [page, limit, cloudProvider, team, env, year, month, sortBy, sortOrder]);
 
+    /**
+     * Toggle sorting between cost and date fields.
+     * @param {string} key - Sort field ('cost' or 'date')
+     */
     const handleSortToggle = (key) => {
         if (sortBy === key) {
             setSortOrder((o) => (o === "asc" ? "desc" : "asc"));
@@ -106,7 +141,10 @@ export default function CloudSpendViewer() {
         setPage(1);
     };
 
-    // Active filters helper
+    /**
+     * Get list of currently active filters for display.
+     * @returns {Array<{key: string, label: string, value: string}>}
+     */
     const getActiveFilters = () => {
         const list = [];
         if (cloudProvider && cloudProvider !== "All")
@@ -161,6 +199,10 @@ export default function CloudSpendViewer() {
 
     const activeFilters = getActiveFilters();
 
+    /**
+     * Clear a specific filter by key.
+     * @param {string} key - Filter key to remove
+     */
     const clearFilter = (key) => {
         if (key === "cloud_provider") setCloudProvider("All");
         if (key === "team") setTeam("All");
@@ -174,6 +216,9 @@ export default function CloudSpendViewer() {
         setPage(1);
     };
 
+    /**
+     * Clear all active filters and reset to defaults.
+     */
     const clearAllFilters = () => {
         setCloudProvider("All");
         setTeam("All");
@@ -188,7 +233,7 @@ export default function CloudSpendViewer() {
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-6">
             <div className="max-w-7xl mx-auto">
-                {/* Header */}
+                {/* Header Section */}
                 <div className="mb-8">
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                         K&Co. Cloud Spend Viewer
@@ -201,7 +246,11 @@ export default function CloudSpendViewer() {
 
                 {/* Error Alert */}
                 {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div
+                        className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
+                        role="alert"
+                        aria-live="polite"
+                    >
                         <div className="flex items-center">
                             <svg
                                 className="w-5 h-5 text-red-500 mr-2"
@@ -223,6 +272,7 @@ export default function CloudSpendViewer() {
                         <button
                             onClick={() => setError(null)}
                             className="mt-2 text-sm text-red-600 hover:text-red-800"
+                            aria-label="Dismiss error message"
                         >
                             Dismiss
                         </button>
@@ -277,7 +327,7 @@ export default function CloudSpendViewer() {
                                 )}
                             </h2>
 
-                            {/* Rows per page */}
+                            {/* Rows per page selector */}
                             <div className="flex items-center gap-2">
                                 <label className="text-sm text-gray-600">
                                     Rows per page:
@@ -290,6 +340,7 @@ export default function CloudSpendViewer() {
                                         setLimit(Number(e.target.value));
                                         setPage(1);
                                     }}
+                                    aria-label="Select number of rows per page"
                                 >
                                     {[5, 10, 20, 50].map((n) => (
                                         <option key={n} value={n}>

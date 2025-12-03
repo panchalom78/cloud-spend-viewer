@@ -4,7 +4,7 @@ import { getCloudData } from "../controllers/cloud-data.controller.js";
 const router = express.Router();
 
 /**
- * @route GET /api/cloud-data
+ * @route GET /api/data
  * @desc Get cloud spending data with filtering, sorting, pagination
  * @access Public
  * @query {number} [page=1] - Page number

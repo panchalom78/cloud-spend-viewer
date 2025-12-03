@@ -1,6 +1,30 @@
-import React from "react";
+/**
+ * Summary Card Component
+ *
+ * Dashboard summary card showing total spending, cloud provider breakdown,
+ * and top services. Includes loading skeletons and error states.
+ *
+ * @component
+ * @requires ./Spinner - Loading indicator component
+ * @example
+ * // Basic summary display
+ * <SummaryCard
+ *   summary={spendingSummary}
+ *   loading={false}
+ *   error={null}
+ * />
+ */
+
 import Spinner from "./Spinner";
 
+/**
+ * Loading skeleton for summary cards.
+ *
+ * @component
+ * @example
+ * // Show loading state
+ * <SummarySkeleton />
+ */
 function SummarySkeleton() {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -17,7 +41,38 @@ function SummarySkeleton() {
     );
 }
 
+/**
+ * Dashboard summary card with spending insights.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.summary - Spending summary data
+ * @param {number} props.summary.total - Total spending amount
+ * @param {Object} props.summary.byCloud - Cloud provider breakdown
+ * @param {Array} props.summary.topServices - Top 5 services by cost
+ * @param {boolean} props.loading - Loading state flag
+ * @param {string|null} props.error - Error message if loading failed
+ *
+ * @example
+ * // Complete summary with data
+ * <SummaryCard
+ *   summary={{
+ *     total: 15432.50,
+ *     byCloud: { AWS: 10321.75, GCP: 5110.75 },
+ *     topServices: [
+ *       { service: "EC2", cost: 5420.25 },
+ *       { service: "BigQuery", cost: 3210.50 }
+ *     ]
+ *   }}
+ *   loading={isLoading}
+ *   error={fetchError}
+ * />
+ */
 function SummaryCard({ summary, loading, error }) {
+    /**
+     * Format total spending with currency.
+     * @type {string}
+     */
     const totalFormatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -25,6 +80,10 @@ function SummaryCard({ summary, loading, error }) {
         maximumFractionDigits: 2,
     }).format(summary.total);
 
+    /**
+     * Convert cloud breakdown object to array for mapping.
+     * @type {Array<{cloud: string, cost: number}>}
+     */
     const byCloudItems = Object.entries(summary.byCloud || {}).map(
         ([k, v]) => ({
             cloud: k,
@@ -44,17 +103,24 @@ function SummaryCard({ summary, loading, error }) {
             {loading ? (
                 <SummarySkeleton />
             ) : error ? (
-                <div className="text-red-600 bg-red-50 p-4 rounded-lg">
+                <div
+                    className="text-red-600 bg-red-50 p-4 rounded-lg"
+                    role="alert"
+                    aria-live="polite"
+                >
                     Failed to load summary
                 </div>
             ) : (
                 <>
-                    {/* Total Spend */}
+                    {/* Total Spend Section */}
                     <div className="mb-6 p-4 bg-white rounded-lg shadow-sm">
                         <div className="text-sm text-gray-500 mb-1">
                             Total Spend
                         </div>
-                        <div className="text-3xl md:text-4xl font-bold text-gray-900">
+                        <div
+                            className="text-3xl md:text-4xl font-bold text-gray-900"
+                            aria-label={`Total spending: ${totalFormatted}`}
+                        >
                             {totalFormatted}
                         </div>
                         <div className="text-sm text-gray-500 mt-1">
@@ -62,14 +128,17 @@ function SummaryCard({ summary, loading, error }) {
                         </div>
                     </div>
 
-                    {/* Cloud Breakdown */}
+                    {/* Cloud Provider Breakdown */}
                     <div className="mb-6">
                         <h3 className="text-sm font-medium text-gray-700 mb-3">
                             By Cloud Provider
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {byCloudItems.length === 0 ? (
-                                <div className="col-span-full text-center py-4 text-gray-500">
+                                <div
+                                    className="col-span-full text-center py-4 text-gray-500"
+                                    aria-live="polite"
+                                >
                                     No cloud data available
                                 </div>
                             ) : (
@@ -77,6 +146,8 @@ function SummaryCard({ summary, loading, error }) {
                                     <div
                                         key={it.cloud}
                                         className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                        role="region"
+                                        aria-label={`${it.cloud} spending`}
                                     >
                                         <div className="flex items-center justify-between mb-2">
                                             <span className="text-sm font-medium text-gray-700">
@@ -90,6 +161,7 @@ function SummaryCard({ summary, loading, error }) {
                                                         ? "bg-blue-100 text-blue-800"
                                                         : "bg-gray-100 text-gray-800"
                                                 }`}
+                                                aria-hidden="true"
                                             >
                                                 {it.cloud}
                                             </div>
@@ -108,22 +180,30 @@ function SummaryCard({ summary, loading, error }) {
                         </div>
                     </div>
 
-                    {/* Top Services */}
+                    {/* Top Services Section */}
                     <div>
                         <h3 className="text-sm font-medium text-gray-700 mb-3">
                             Top Services
                         </h3>
                         {summary.topServices &&
                         summary.topServices.length > 0 ? (
-                            <div className="bg-white rounded-lg shadow-sm p-4">
+                            <div
+                                className="bg-white rounded-lg shadow-sm p-4"
+                                role="region"
+                                aria-label="Top services by cost"
+                            >
                                 <div className="space-y-3">
                                     {summary.topServices.map((s, index) => (
                                         <div
                                             key={`${s.service}-${index}`}
                                             className="flex items-center justify-between p-2 hover:bg-gray-50 rounded transition-colors"
+                                            role="listitem"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-6 h-6 flex items-center justify-center bg-blue-100 text-blue-700 rounded text-sm font-medium">
+                                                <div
+                                                    className="w-6 h-6 flex items-center justify-center bg-blue-100 text-blue-700 rounded text-sm font-medium"
+                                                    aria-hidden="true"
+                                                >
                                                     {index + 1}
                                                 </div>
                                                 <span className="text-sm font-medium text-gray-700">
@@ -146,7 +226,10 @@ function SummaryCard({ summary, loading, error }) {
                                 </div>
                             </div>
                         ) : (
-                            <div className="text-center py-6 text-gray-500 bg-white rounded-lg">
+                            <div
+                                className="text-center py-6 text-gray-500 bg-white rounded-lg"
+                                aria-live="polite"
+                            >
                                 No service data available
                             </div>
                         )}

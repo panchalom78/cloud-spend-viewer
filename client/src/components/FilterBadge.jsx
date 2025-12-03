@@ -1,5 +1,39 @@
-import React from "react";
+/**
+ * Filter Badge Component
+ *
+ * Visual indicator for active filters with remove functionality.
+ * Used in filter controls to show applied filters and allow removal.
+ *
+ * @component
+ * @example
+ * // Basic usage
+ * <FilterBadge
+ *   label="Team"
+ *   value="Core"
+ *   onRemove={() => removeTeamFilter()}
+ *   disabled={false}
+ * />
+ */
 
+/**
+ * Badge component representing an active filter.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} props.label - Filter category name (e.g., "Team", "Cloud")
+ * @param {string} props.value - Filter value (e.g., "Core", "AWS")
+ * @param {Function} props.onRemove - Callback when remove button is clicked
+ * @param {boolean} props.disabled - Disable remove button state
+ *
+ * @example
+ * // Interactive filter badge
+ * <FilterBadge
+ *   label="Environment"
+ *   value="production"
+ *   onRemove={() => setEnvFilter('All')}
+ *   disabled={isLoading}
+ * />
+ */
 function FilterBadge({ label, value, onRemove, disabled }) {
     return (
         <div className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1.5 rounded-full text-sm">

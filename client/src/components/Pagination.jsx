@@ -1,5 +1,45 @@
-import React from "react";
+/**
+ * Pagination Component
+ *
+ * Navigation controls for paginated data tables.
+ * Provides previous/next buttons, page number navigation, and page info.
+ *
+ * @component
+ * @example
+ * // Basic pagination
+ * <Pagination
+ *   page={currentPage}
+ *   setPage={setCurrentPage}
+ *   limit={itemsPerPage}
+ *   setLimit={setItemsPerPage}
+ *   meta={paginationMeta}
+ *   loading={isLoading}
+ * />
+ */
 
+/**
+ * Pagination navigation component.
+ *
+ * @component
+ * @param {Object} props
+ * @param {number} props.page - Current page number
+ * @param {Function} props.setPage - Page setter function
+ * @param {number} props.limit - Items per page
+ * @param {Function} props.setLimit - Limit setter function
+ * @param {Object} [props.meta] - Pagination metadata from API
+ * @param {boolean} props.loading - Loading state to disable controls
+ *
+ * @example
+ * // With API metadata
+ * <Pagination
+ *   page={1}
+ *   setPage={handlePageChange}
+ *   limit={10}
+ *   setLimit={handleLimitChange}
+ *   meta={apiResponse.meta}
+ *   loading={false}
+ * />
+ */
 function Pagination({ page, setPage, limit, setLimit, meta, loading }) {
     return (
         <div className="px-5 py-4 border-t border-gray-200 bg-gray-50">
@@ -15,6 +55,7 @@ function Pagination({ page, setPage, limit, setLimit, meta, loading }) {
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {/* Previous Page Button */}
                     <button
                         className="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -23,6 +64,7 @@ function Pagination({ page, setPage, limit, setLimit, meta, loading }) {
                                 ? meta.page <= 1 || loading
                                 : page <= 1 || loading
                         }
+                        aria-label="Previous page"
                     >
                         <svg
                             className="w-4 h-4"
@@ -40,7 +82,7 @@ function Pagination({ page, setPage, limit, setLimit, meta, loading }) {
                         Previous
                     </button>
 
-                    {/* Page Numbers */}
+                    {/* Page Number Buttons */}
                     {meta && meta.totalPages > 1 && (
                         <div className="hidden sm:flex items-center gap-1">
                             {Array.from(
@@ -70,6 +112,12 @@ function Pagination({ page, setPage, limit, setLimit, meta, loading }) {
                                             } transition-colors`}
                                             onClick={() => setPage(pageNum)}
                                             disabled={loading}
+                                            aria-label={`Go to page ${pageNum}`}
+                                            aria-current={
+                                                meta.page === pageNum
+                                                    ? "page"
+                                                    : undefined
+                                            }
                                         >
                                             {pageNum}
                                         </button>
@@ -79,6 +127,7 @@ function Pagination({ page, setPage, limit, setLimit, meta, loading }) {
                         </div>
                     )}
 
+                    {/* Next Page Button */}
                     <button
                         className="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors"
                         onClick={() => setPage((p) => p + 1)}
@@ -87,6 +136,7 @@ function Pagination({ page, setPage, limit, setLimit, meta, loading }) {
                                 ? meta.page >= meta.totalPages || loading
                                 : loading
                         }
+                        aria-label="Next page"
                     >
                         Next
                         <svg

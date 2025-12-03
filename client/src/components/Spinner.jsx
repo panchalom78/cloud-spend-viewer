@@ -1,6 +1,36 @@
-import React from "react";
+/**
+ * Spinner Component
+ *
+ * Loading indicator with size variants and customizable styling.
+ * Uses SVG-based animation for smooth rotation.
+ *
+ * @component
+ * @example
+ * // Basic spinner
+ * <Spinner />
+ * // Large spinner with custom class
+ * <Spinner size="lg" className="text-blue-500" />
+ */
 
+/**
+ * Loading spinner component with size variants.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} [props.size="md"] - Spinner size: 'sm', 'md', 'lg', 'xl'
+ * @param {string} [props.className=""] - Additional CSS classes
+ *
+ * @example
+ * // Small spinner
+ * <Spinner size="sm" />
+ * // Custom colored spinner
+ * <Spinner className="text-blue-500" />
+ */
 function Spinner({ size = "md", className = "" }) {
+    /**
+     * Size mapping for consistent dimensions.
+     * @type {Object}
+     */
     const sizeClasses = {
         sm: "h-4 w-4",
         md: "h-5 w-5",
@@ -14,6 +44,8 @@ function Spinner({ size = "md", className = "" }) {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
+            role="status"
+            aria-label="Loading"
         >
             <circle
                 className="opacity-25"

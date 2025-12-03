@@ -1,6 +1,35 @@
+/**
+ * Spend Table Component
+ *
+ * Data table component for displaying cloud spending records with
+ * loading states, empty states, and detail modal integration.
+ *
+ * @component
+ * @requires ./DetailModal - Modal for detailed record view
+ * @example
+ * // Basic table with data
+ * <SpendTable
+ *   rows={spendingData}
+ *   loading={isLoading}
+ *   limit={10}
+ *   onRowClick={(row) => console.log('Row clicked:', row)}
+ * />
+ */
+
 import React from "react";
 import DetailModal from "./DetailModal";
 
+/**
+ * Loading skeleton for table rows.
+ *
+ * @component
+ * @param {Object} props
+ * @param {number} [props.rows=5] - Number of skeleton rows to display
+ *
+ * @example
+ * // Show 10 loading rows
+ * <TableSkeleton rows={10} />
+ */
 function TableSkeleton({ rows = 5 }) {
     return (
         <tbody>
@@ -30,18 +59,49 @@ function TableSkeleton({ rows = 5 }) {
     );
 }
 
+/**
+ * Main spending data table component.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Array} props.rows - Array of spending record objects
+ * @param {boolean} props.loading - Loading state flag
+ * @param {number} props.limit - Number of items per page (for skeleton rows)
+ * @param {Function} [props.onRowClick] - Callback when row is clicked
+ *
+ * @example
+ * // Interactive data table
+ * <SpendTable
+ *   rows={filteredData}
+ *   loading={fetching}
+ *   limit={pageSize}
+ *   onRowClick={(record) => setSelectedRecord(record)}
+ * />
+ */
 function SpendTable({ rows, loading, limit, onRowClick }) {
     const [selectedRow, setSelectedRow] = React.useState(null);
 
+    /**
+     * Handle row click to open detail modal.
+     * @param {Object} row - Clicked row data
+     */
     const handleRowClick = (row) => {
         setSelectedRow(row);
         if (onRowClick) onRowClick(row);
     };
 
+    /**
+     * Close detail modal handler.
+     */
     const handleCloseModal = () => {
         setSelectedRow(null);
     };
 
+    /**
+     * Format currency values consistently.
+     * @param {number} amount - Cost amount in USD
+     * @returns {string} Formatted currency string
+     */
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -118,6 +178,17 @@ function SpendTable({ rows, loading, limit, onRowClick }) {
                                     key={`${r.date}-${r.service}-${idx}`}
                                     className="hover:bg-gray-50 transition-colors cursor-pointer"
                                     onClick={() => handleRowClick(r)}
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-label={`View details for ${r.service} on ${r.date}`}
+                                    onKeyDown={(e) => {
+                                        if (
+                                            e.key === "Enter" ||
+                                            e.key === " "
+                                        ) {
+                                            handleRowClick(r);
+                                        }
+                                    }}
                                 >
                                     <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {r.date}
@@ -131,6 +202,7 @@ function SpendTable({ rows, loading, limit, onRowClick }) {
                                                     ? "bg-blue-100 text-blue-800"
                                                     : "bg-gray-100 text-gray-800"
                                             }`}
+                                            aria-label={`Cloud provider: ${r.cloud_provider}`}
                                         >
                                             {r.cloud_provider}
                                         </span>
@@ -139,7 +211,10 @@ function SpendTable({ rows, loading, limit, onRowClick }) {
                                         {r.service}
                                     </td>
                                     <td className="px-5 py-4 whitespace-nowrap">
-                                        <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded">
+                                        <span
+                                            className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded"
+                                            aria-label={`Team: ${r.team}`}
+                                        >
                                             {r.team}
                                         </span>
                                     </td>
@@ -152,6 +227,7 @@ function SpendTable({ rows, loading, limit, onRowClick }) {
                                                     ? "bg-yellow-100 text-yellow-800"
                                                     : "bg-green-100 text-green-800"
                                             }`}
+                                            aria-label={`Environment: ${r.env}`}
                                         >
                                             {r.env}
                                         </span>
@@ -166,6 +242,7 @@ function SpendTable({ rows, loading, limit, onRowClick }) {
                 </table>
             </div>
 
+            {/* Detail Modal */}
             <DetailModal
                 isOpen={selectedRow !== null}
                 onClose={handleCloseModal}
